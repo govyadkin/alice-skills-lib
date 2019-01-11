@@ -3,9 +3,7 @@
 #include "Structs.hpp"
 #include <Skill.hpp>
 
-
-
-ForwardList polsk(const std::vector<std::string>& v, Alice::Response& response) // writes an example in Polish notation
+ForwardList polsk(const std::vector<std::string>& v, Alice::Response& response)
 {
     ForwardList list, station;
     Construct(list);
@@ -16,26 +14,13 @@ ForwardList polsk(const std::vector<std::string>& v, Alice::Response& response) 
     for (size_t i = 1; i < v.size(); ++i)
     {
         action = 2;
-        /*
-        Значения action:
-        1. Вагон на стрелке отправляется в station
-            PushFront(station, v[i]);
-        2. Последний вагон, направившийся в station, разворачивается и направляется в list
-            PushFront(list,PopFront(station));
-        3. Вагон, находящийся на стрелке, и последний вагон, отправившийся в station, угоняются и исчезают
-
-        4. Остановка. Символы, находящиеся на list, представляют собой формулу в обратной польской записи
-        5. Остановка. Произошла ошибка. Изначальная формула была некорректно сбалансирована
-        6. Это mod, sin, cos, tg, ctg, sh, ch, th, arcsin, arccos, arctg, arcctg
-        */
         while (action == 2)
         {
             if (v[i] == "(")
             {
                 action = 1;
                 PushFront(station, v[i]);
-            }
-            else if ((v[i] == "+") || (v[i] == "-"))
+            }else if ((v[i] == "+") || (v[i] == "-"))
             {
                 if ((v[i - 1] == "+") || (v[i - 1] == "-") ||
                     (v[i - 1] == "*") || (v[i - 1] == "/") ||
@@ -44,154 +29,133 @@ ForwardList polsk(const std::vector<std::string>& v, Alice::Response& response) 
                     PushFront(list, v[i] + v[i + 1]);
                     action = 0;
                     ++i;
-                }
-                else if (((station.Head)->Data == "|") || ((station.Head)->Data == "("))
+                }else if (((station.Head)->Data == "|") ||
+                          ((station.Head)->Data == "("))
                 {
                     action = 1;
                     PushFront(station, v[i]);
-                }
-                else {
+                }else {
                     action = 2;
                     PushFront(list, PopFront(station));
                 }
-            }
-            else if (v[i] == "*")
+            }else if (v[i] == "*")
             {
-                if (((station.Head)->Data == "*") || ((station.Head)->Data == "/"))
+                if (((station.Head)->Data == "*") ||
+                    ((station.Head)->Data == "/"))
                 {
                     action = 2;
                     PushFront(list, PopFront(station));
-                }
-                else {
+                }else {
                     action = 1;
                     PushFront(station, v[i]);
                 }
-            }
-            else if (v[i] == "/")
+            }else if (v[i] == "/")
             {
                 flag = 1;
-                if (((station.Head)->Data == "*") || ((station.Head)->Data == "/"))
+                if (((station.Head)->Data == "*") ||
+                    ((station.Head)->Data == "/"))
                 {
                     action = 2;
                     PushFront(list, PopFront(station));
-                }
-                else {
+                }else {
                     action = 1;
                     PushFront(station, v[i]);
                 }
-            }
-            else if (v[i] == "|")
+            }else if (v[i] == "|")
             {
                 if ((station.Head)->Data == "|")
                 {
                     action = 4;
-                }
-                else if ((station.Head)->Data == "(") {
+                }else if ((station.Head)->Data == "(") {
                     action = 5;
                     response.SetText("ERROR");
                     response.SetTts("ERROR");
-                }
-                else {
+                }else {
                     action = 2;
                     PushFront(list, PopFront(station));
                 }
-            }
-            else if (v[i] == ")")
+            }else if (v[i] == ")")
             {
                 if ((station.Head)->Data == "|")
                 {
                     action = 5;
                     response.SetText("ERROR");
                     response.SetTts("ERROR");
-                }
-                else if ((station.Head)->Data == "(") {
+                }else if ((station.Head)->Data == "(") {
                     action = 3;
                     std::string s = PopFront(station);
-                }
-                else {
+                }else {
                     action = 2;
                     PushFront(list, PopFront(station));
                 }
-            }
-            else if (v[i] == "sin")
+            }else if (v[i] == "sin")
             {
                 double value = trigon(i, v, response);
                 PushFront(list, std::to_string(sin(value)));
                 action = 6;
                 flag = 1;
-            }
-            else if (v[i] == "cos")
+            }else if (v[i] == "cos")
             {
                 double value = trigon(i, v, response);
                 PushFront(list, std::to_string(cos(value)));
                 action = 6;
                 flag = 1;
-            }
-            else if (v[i] == "tg")
+            }else if (v[i] == "tg")
             {
                 double value = trigon(i, v, response);
                 PushFront(list, std::to_string(tan(value)));
                 action = 6;
                 flag = 1;
-            }
-            else if (v[i] == "ctg")
+            }else if (v[i] == "ctg")
             {
                 double value = trigon(i, v, response);
                 PushFront(list, std::to_string(1 / tan(value)));
                 action = 6;
                 flag = 1;
-            }
-            else if (v[i] == "asin")
+            }else if (v[i] == "asin")
             {
                 double value = trigon(i, v, response);
                 PushFront(list, std::to_string(asin(value)));
                 action = 6;
                 flag = 1;
-            }
-            else if (v[i] == "acos")
+            }else if (v[i] == "acos")
             {
                 double value = trigon(i, v, response);
                 PushFront(list, std::to_string(acos(value)));
                 action = 6;
                 flag = 1;
-            }
-            else if (v[i] == "atg")
+            }else if (v[i] == "atg")
             {
                 double value = trigon(i, v, response);
                 PushFront(list, std::to_string(atan(value)));
                 action = 6;
                 flag = 1;
-            }
-            else if (v[i] == "actg")
+            }else if (v[i] == "actg")
             {
                 double value = trigon(i, v, response);
                 value = (3.14 / 2) - atan(value);
                 PushFront(list, std::to_string(value));
                 action = 6;
                 flag = 1;
-            }
-            else if (v[i] == "sh")
+            }else if (v[i] == "sh")
             {
                 double value = trigon(i, v, response);
                 PushFront(list, std::to_string(sinh(value)));
                 action = 6;
                 flag = 1;
-            }
-            else if (v[i] == "ch")
+            }else if (v[i] == "ch")
             {
                 double value = trigon(i, v, response);
                 PushFront(list, std::to_string(cosh(value)));
                 action = 6;
                 flag = 1;
-            }
-            else if (v[i] == "th")
+            }else if (v[i] == "th")
             {
                 double value = trigon(i, v, response);
                 PushFront(list, std::to_string(tanh(value)));
                 action = 6;
                 flag = 1;
-            }
-            else if (v[i] == "mod")
+            }else if (v[i] == "mod")
             {
                 for (size_t j = 1; j < Size(station);)
                 {
@@ -202,8 +166,7 @@ ForwardList polsk(const std::vector<std::string>& v, Alice::Response& response) 
                 PushFront(list, std::to_string(value));
                 action = 7;
                 flag2 = 1;
-            }
-            else {
+            }else {
                 PushFront(list, v[i]);
                 action = 0;
             }
@@ -223,7 +186,8 @@ ForwardList polsk(const std::vector<std::string>& v, Alice::Response& response) 
     return list;
 }
 
-double trigon(size_t& i, const std::vector<std::string>& v, Alice::Response& response) // calculate result trigonometric function
+double trigon(size_t& i, const std::vector<std::string>& v,
+              Alice::Response& response)
 {
     int count = 1;
     i = i + 2;
@@ -236,8 +200,7 @@ double trigon(size_t& i, const std::vector<std::string>& v, Alice::Response& res
         if (v[i] == ")")
         {
             --count;
-        }
-        else if (v[i] == "(")
+        }else if (v[i] == "(")
         {
             ++count;
         }
@@ -254,7 +217,7 @@ double trigon(size_t& i, const std::vector<std::string>& v, Alice::Response& res
     return value;
 }
 
-double calc(ForwardList& list) // calculate result
+double calc(ForwardList& list)
 {
     ForwardList2 station;
     Construct(station);
@@ -267,31 +230,26 @@ double calc(ForwardList& list) // calculate result
             double b = PopFront(station), a = PopFront(station);
             a = a + b;
             PushFront(station, a);
-        }
-        else if (str == "-") {
+        }else if (str == "-") {
             double b = PopFront(station), a = PopFront(station);
             a = a - b;
             PushFront(station, a);
-        }
-        else if (str == "*") {
+        }else if (str == "*") {
             double b = PopFront(station), a = PopFront(station);
             a = a * b;
             PushFront(station, a);
-        }
-        else if (str == "/") {
+        }else if (str == "/") {
             double b = PopFront(station), a = PopFront(station);
             a = a / b;
             PushFront(station, a);
-        }
-        else if (str == "mod") {
+        }else if (str == "mod") {
             int a = (int)PopFront(station);
             str = PopFront(list);
             ++i;
             int b = (int)std::stoi(str);
             a = a % b;
             PushFront(station, a);
-        }
-        else {
+        }else {
             double a = Strtodouble(str);
             PushFront(station, a);
         }
@@ -301,7 +259,7 @@ double calc(ForwardList& list) // calculate result
     return calc;
 }
 
-std::vector<std::string> split(const std::string& str) // splits string into individual elements
+std::vector<std::string> split(const std::string& str)
 {
     std::string str1 = ' ' + str + ' ';
     std::vector<int> num;
@@ -353,7 +311,7 @@ std::vector<std::string> split(const std::string& str) // splits string into ind
     return value;
 }
 
-double Strtodouble(const std::string str) // transformation string to double
+double Strtodouble(const std::string str)
 {
     size_t i = 0;
     for (; (i < str.size()) && (str[i] != '.'); ++i) {}
@@ -367,8 +325,7 @@ double Strtodouble(const std::string str) // transformation string to double
                 pow(0.1, str.size() - i - 1);
         }
         a = -a;
-    }
-    else if (str[0] == '+')
+    }else if (str[0] == '+')
     {
         a = std::stoi(str.substr(1, i));
         if (i != str.size())
@@ -376,8 +333,7 @@ double Strtodouble(const std::string str) // transformation string to double
             a = a + std::stoi(str.substr(i + 1, str.size() - i - 1)) *
                 pow(0.1, str.size() - i - 1);
         }
-    }
-    else {
+    }else {
         a = std::stoi(str);
         if (i != str.size())
         {
@@ -494,8 +450,8 @@ void MyCallback(const Alice::Request& request, Alice::Response& response)
     std::string answer;
     do
     {
-        response.SetText("Enter your expression. For example: 3 * (5 + sin(5)) mod(4)\n");
-        response.SetTts("Enter your expression.For example : 3 * (5 + sin(5)) mod(4)\n");
+        response.SetText("Enter your expression. For example: 3*5 mod(4)\n");
+        response.SetTts("Enter your expression\n");
         std::vector<std::string> v = split(request.Command() + " |");
         ForwardList list;
         Construct(list);
