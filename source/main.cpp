@@ -70,6 +70,9 @@ ForwardList polsk(const std::vector<std::string>& v, Alice::Response& response)
                     action = 5;
                     response.SetText("ERROR");
                     response.SetTts("ERROR");
+                    Destruct(station);
+                    Destruct(list);
+                    return list;
                 }else {
                     action = 2;
                     PushFront(list, PopFront(station));
@@ -81,6 +84,9 @@ ForwardList polsk(const std::vector<std::string>& v, Alice::Response& response)
                     action = 5;
                     response.SetText("ERROR");
                     response.SetTts("ERROR");
+                    Destruct(station);
+                    Destruct(list);
+                    return list;
                 }else if ((station.Head)->Data == "(") {
                     action = 3;
                     std::string s = PopFront(station);
@@ -181,6 +187,9 @@ ForwardList polsk(const std::vector<std::string>& v, Alice::Response& response)
         action = 5;
         response.SetText("ERROR");
         response.SetTts("ERROR");
+        Destruct(station);
+        Destruct(list);
+        return list;
     }
     Destruct(station);
     return list;
@@ -447,26 +456,24 @@ size_t Size(const ForwardList2& list)
 
 void MyCallback(const Alice::Request& request, Alice::Response& response)
 {
-    std::string answer;
-    do
-    {
+    if (request.Command().empty()) {
         response.SetText("Enter your expression. For example: 3*5 mod(4)\n");
         response.SetTts("Enter your expression\n");
+        response.SetEndSession(false);
+    }else {
         std::vector<std::string> v = split(request.Command() + " |");
         ForwardList list;
         Construct(list);
         list = polsk(v, response);
         PopFront(list);
         Reverse(list);
-        answer = " = " + std::to_string(calc(list)) + "\n";
+        std::string answer = " = " + std::to_string(calc(list)) + "\n";
         response.SetText(answer);
         response.SetTts(answer);
         Destruct(list);
-        response.SetText("Calculate you still what any expression?\n");
-        response.SetTts("Calculate you still what any expression?\n");
-        answer = request.Command();
-    } while (answer == "Yes");
-    response.SetEndSession(true);
+        response.SetEndSession(true);
+    }
+    return;
 }
 
 int main() {
