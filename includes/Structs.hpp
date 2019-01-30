@@ -23,7 +23,7 @@ struct ForwardList2 {
 
 ForwardList polsk(const std::vector<std::string>& v, Alice::Response& response);
 double trigon(size_t& i, const std::vector<std::string>& v, Alice::Response& response);
-double calc(ForwardList& list);
+double calc(ForwardList& list, Alice::Response& response);
 std::vector<std::string> split(const std::string& str);
 
 double Strtodouble(const std::string str);
