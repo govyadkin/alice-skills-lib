@@ -72,6 +72,7 @@ ForwardList polsk(const std::vector<std::string>& v, Alice::Response& response)
                     response.SetTts("ERROR");
                     Destruct(station);
                     Destruct(list);
+                    response.SetEndSession(true);
                     return list;
                 }else {
                     action = 2;
@@ -86,6 +87,7 @@ ForwardList polsk(const std::vector<std::string>& v, Alice::Response& response)
                     response.SetTts("ERROR");
                     Destruct(station);
                     Destruct(list);
+                    response.SetEndSession(true);
                     return list;
                 }else if ((station.Head)->Data == "(") {
                     action = 3;
@@ -189,6 +191,7 @@ ForwardList polsk(const std::vector<std::string>& v, Alice::Response& response)
         response.SetTts("ERROR");
         Destruct(station);
         Destruct(list);
+        response.SetEndSession(true);
         return list;
     }
     Destruct(station);
@@ -258,9 +261,11 @@ double calc(ForwardList& list)
             int b = (int)std::stoi(str);
             a = a % b;
             PushFront(station, a);
-        }else {
+        }else if ((str[0] >='0') && (str[0] <='9')) {
             double a = Strtodouble(str);
             PushFront(station, a);
+        }else {
+            response.SetEndSession(true);
         }
     }
     double calc = PopFront(station);
