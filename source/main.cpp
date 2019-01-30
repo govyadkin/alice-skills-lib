@@ -225,11 +225,11 @@ double trigon(size_t& i, const std::vector<std::string>& v,
     subg = polsk(v1, response);
     PopFront(subg);
     Reverse(subg);
-    double value = calc(subg);
+    double value = calc(subg, response);
     return value;
 }
 
-double calc(ForwardList& list)
+double calc(ForwardList& list, Alice::Response& response)
 {
     ForwardList2 station;
     Construct(station);
@@ -268,7 +268,7 @@ double calc(ForwardList& list)
             response.SetEndSession(true);
         }
     }
-    double calc = PopFront(station);
+    double calc = PopFront(station, response);
     Destruct(station);
     return calc;
 }
@@ -472,7 +472,7 @@ void MyCallback(const Alice::Request& request, Alice::Response& response)
         list = polsk(v, response);
         PopFront(list);
         Reverse(list);
-        std::string answer = " = " + std::to_string(calc(list)) + "\n";
+        std::string answer = " = " + std::to_string(calc(list, response)) + "\n";
         response.SetText(answer);
         response.SetTts(answer);
         Destruct(list);
