@@ -268,7 +268,7 @@ double calc(ForwardList& list, Alice::Response& response)
             response.SetEndSession(true);
         }
     }
-    double calc = PopFront(station, response);
+    double calc = PopFront(station);
     Destruct(station);
     return calc;
 }
