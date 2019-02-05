@@ -3,7 +3,8 @@
 #include "Structs.hpp"
 #include <Skill.hpp>
 
-ForwardList polsk(const std::vector<std::string>& v, Alice::Response& response)
+ForwardList polsk(const std::vector<std::string>& v,
+                  Alice::Response& response, std::string& answer)
 {
     ForwardList list, station;
     Construct(list);
@@ -68,11 +69,9 @@ ForwardList polsk(const std::vector<std::string>& v, Alice::Response& response)
                     action = 4;
                 }else if ((station.Head)->Data == "(") {
                     action = 5;
-                    response.SetText("ERROR");
-                    response.SetTts("ERROR");
+                    answer += "Absents ) ";
                     Destruct(station);
                     Destruct(list);
-                    response.SetEndSession(true);
                     return list;
                 }else {
                     action = 2;
@@ -83,11 +82,9 @@ ForwardList polsk(const std::vector<std::string>& v, Alice::Response& response)
                 if ((station.Head)->Data == "|")
                 {
                     action = 5;
-                    response.SetText("ERROR");
-                    response.SetTts("ERROR");
+                    answer += "Absents ( ";
                     Destruct(station);
                     Destruct(list);
-                    response.SetEndSession(true);
                     return list;
                 }else if ((station.Head)->Data == "(") {
                     action = 3;
@@ -98,68 +95,68 @@ ForwardList polsk(const std::vector<std::string>& v, Alice::Response& response)
                 }
             }else if (v[i] == "sin")
             {
-                double value = trigon(i, v, response);
+                double value = trigon(i, v, response, answer);
                 PushFront(list, std::to_string(sin(value)));
                 action = 6;
                 flag = 1;
             }else if (v[i] == "cos")
             {
-                double value = trigon(i, v, response);
+                double value = trigon(i, v, response, answer);
                 PushFront(list, std::to_string(cos(value)));
                 action = 6;
                 flag = 1;
             }else if (v[i] == "tg")
             {
-                double value = trigon(i, v, response);
+                double value = trigon(i, v, response, answer);
                 PushFront(list, std::to_string(tan(value)));
                 action = 6;
                 flag = 1;
             }else if (v[i] == "ctg")
             {
-                double value = trigon(i, v, response);
+                double value = trigon(i, v, response, answer);
                 PushFront(list, std::to_string(1 / tan(value)));
                 action = 6;
                 flag = 1;
             }else if (v[i] == "asin")
             {
-                double value = trigon(i, v, response);
+                double value = trigon(i, v, respons, answere);
                 PushFront(list, std::to_string(asin(value)));
                 action = 6;
                 flag = 1;
             }else if (v[i] == "acos")
             {
-                double value = trigon(i, v, response);
+                double value = trigon(i, v, response, answer);
                 PushFront(list, std::to_string(acos(value)));
                 action = 6;
                 flag = 1;
             }else if (v[i] == "atg")
             {
-                double value = trigon(i, v, response);
+                double value = trigon(i, v, response, answer);
                 PushFront(list, std::to_string(atan(value)));
                 action = 6;
                 flag = 1;
             }else if (v[i] == "actg")
             {
-                double value = trigon(i, v, response);
+                double value = trigon(i, v, response, answer);
                 value = (3.14 / 2) - atan(value);
                 PushFront(list, std::to_string(value));
                 action = 6;
                 flag = 1;
             }else if (v[i] == "sh")
             {
-                double value = trigon(i, v, response);
+                double value = trigon(i, v, response, answer);
                 PushFront(list, std::to_string(sinh(value)));
                 action = 6;
                 flag = 1;
             }else if (v[i] == "ch")
             {
-                double value = trigon(i, v, response);
+                double value = trigon(i, v, response, answer);
                 PushFront(list, std::to_string(cosh(value)));
                 action = 6;
                 flag = 1;
             }else if (v[i] == "th")
             {
-                double value = trigon(i, v, response);
+                double value = trigon(i, v, response, answer);
                 PushFront(list, std::to_string(tanh(value)));
                 action = 6;
                 flag = 1;
@@ -187,19 +184,16 @@ ForwardList polsk(const std::vector<std::string>& v, Alice::Response& response)
     if (flag && flag2)
     {
         action = 5;
-        response.SetText("ERROR");
-        response.SetTts("ERROR");
-        Destruct(station);
+        answer += "It is not allowed to use" +
+            " trigonometric functions with mod ";
         Destruct(list);
-        response.SetEndSession(true);
-        return list;
     }
     Destruct(station);
     return list;
 }
 
 double trigon(size_t& i, const std::vector<std::string>& v,
-              Alice::Response& response)
+              Alice::Response& response, std::string& answer)
 {
     int count = 1;
     i = i + 2;
@@ -222,18 +216,20 @@ double trigon(size_t& i, const std::vector<std::string>& v,
     v1.push_back("|");
     ForwardList subg;
     Construct(subg);
-    subg = polsk(v1, response);
+    subg = polsk(v1, response, answer);
     PopFront(subg);
     Reverse(subg);
-    double value = calc(subg, response);
+    double value = calc(subg, response, answer);
     return value;
 }
 
-double calc(ForwardList& list, Alice::Response& response)
+double calc(ForwardList& list, Alice::Response& response,
+            std::string& answer)
 {
     ForwardList2 station;
     Construct(station);
     size_t sizelist = Size(list);
+    bool flagMod = false;
     for (size_t i = 0; i < sizelist; ++i)
     {
         std::string str = PopFront(list);
@@ -254,6 +250,7 @@ double calc(ForwardList& list, Alice::Response& response)
             double b = PopFront(station), a = PopFront(station);
             a = a / b;
             PushFront(station, a);
+            flagMod = true;
         }else if (str == "mod") {
             int a = (int)PopFront(station);
             str = PopFront(list);
@@ -261,11 +258,14 @@ double calc(ForwardList& list, Alice::Response& response)
             int b = (int)std::stoi(str);
             a = a % b;
             PushFront(station, a);
+            if (flagMod) {
+                answer += "You cannot use mod with / ";
+            }
         }else if ((str[0] >= '0') && (str[0] <= '9')) {
             double a = Strtodouble(str);
             PushFront(station, a);
         }else {
-            response.SetEndSession(true);
+             answer += "Strange thing " + str + " ";
         }
     }
     double calc = PopFront(station);
@@ -469,16 +469,22 @@ void MyCallback(const Alice::Request& request, Alice::Response& response)
         std::vector<std::string> v = split(request.Command() + " |");
         ForwardList list;
         Construct(list);
-        list = polsk(v, response);
-        PopFront(list);
-        Reverse(list);
-        std::string answer = " = " + std::to_string(calc(list, response)) + "\n";
+        std::string answer = "Oh! ";
+        list = polsk(v, response, answer);
+        if (answer == "Oh! ") {
+            PopFront(list);
+            Reverse(list);
+            std::string answer1 = " = " +
+                std::to_string(calc(list, response, answer)) + "\n";
+            if (answer == "Oh! ") {
+                answer = answer1;
+            }
+        }
         response.SetText(answer);
         response.SetTts(answer);
         Destruct(list);
         response.SetEndSession(true);
     }
-    return;
 }
 
 int main() {
