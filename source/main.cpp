@@ -261,7 +261,7 @@ double calc(ForwardList& list, Alice::Response& response)
             int b = (int)std::stoi(str);
             a = a % b;
             PushFront(station, a);
-        }else if ((str[0] >='0') && (str[0] <='9')) {
+        }else if ((str[0] >= '0') && (str[0] <= '9')) {
             double a = Strtodouble(str);
             PushFront(station, a);
         }else {
