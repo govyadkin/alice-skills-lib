@@ -4,7 +4,7 @@
 #include <Skill.hpp>
 
 ForwardList polsk(const std::vector<std::string>& v,
-                  Alice::Response& response, std::string& answer)
+                  std::string& answer)
 {
     ForwardList list, station;
     Construct(list);
@@ -95,68 +95,68 @@ ForwardList polsk(const std::vector<std::string>& v,
                 }
             }else if (v[i] == "sin")
             {
-                double value = trigon(i, v, response, answer);
+                double value = trigon(i, v, answer);
                 PushFront(list, std::to_string(sin(value)));
                 action = 6;
                 flag = 1;
             }else if (v[i] == "cos")
             {
-                double value = trigon(i, v, response, answer);
+                double value = trigon(i, v, answer);
                 PushFront(list, std::to_string(cos(value)));
                 action = 6;
                 flag = 1;
             }else if (v[i] == "tg")
             {
-                double value = trigon(i, v, response, answer);
+                double value = trigon(i, v, answer);
                 PushFront(list, std::to_string(tan(value)));
                 action = 6;
                 flag = 1;
             }else if (v[i] == "ctg")
             {
-                double value = trigon(i, v, response, answer);
+                double value = trigon(i, v, answer);
                 PushFront(list, std::to_string(1 / tan(value)));
                 action = 6;
                 flag = 1;
             }else if (v[i] == "asin")
             {
-                double value = trigon(i, v, respons, answere);
+                double value = trigon(i, v, answer);
                 PushFront(list, std::to_string(asin(value)));
                 action = 6;
                 flag = 1;
             }else if (v[i] == "acos")
             {
-                double value = trigon(i, v, response, answer);
+                double value = trigon(i, v, answer);
                 PushFront(list, std::to_string(acos(value)));
                 action = 6;
                 flag = 1;
             }else if (v[i] == "atg")
             {
-                double value = trigon(i, v, response, answer);
+                double value = trigon(i, v, answer);
                 PushFront(list, std::to_string(atan(value)));
                 action = 6;
                 flag = 1;
             }else if (v[i] == "actg")
             {
-                double value = trigon(i, v, response, answer);
+                double value = trigon(i, v, answer);
                 value = (3.14 / 2) - atan(value);
                 PushFront(list, std::to_string(value));
                 action = 6;
                 flag = 1;
             }else if (v[i] == "sh")
             {
-                double value = trigon(i, v, response, answer);
+                double value = trigon(i, v, answer);
                 PushFront(list, std::to_string(sinh(value)));
                 action = 6;
                 flag = 1;
             }else if (v[i] == "ch")
             {
-                double value = trigon(i, v, response, answer);
+                double value = trigon(i, v, answer);
                 PushFront(list, std::to_string(cosh(value)));
                 action = 6;
                 flag = 1;
             }else if (v[i] == "th")
             {
-                double value = trigon(i, v, response, answer);
+                double value = trigon(i, v, answer);
                 PushFront(list, std::to_string(tanh(value)));
                 action = 6;
                 flag = 1;
@@ -166,7 +166,7 @@ ForwardList polsk(const std::vector<std::string>& v,
                 {
                     PushFront(list, PopFront(station));
                 }
-                double value = trigon(i, v, response, answer);
+                double value = trigon(i, v, answer);
                 PushFront(list, "mod");
                 PushFront(list, std::to_string(value));
                 action = 7;
@@ -184,8 +184,7 @@ ForwardList polsk(const std::vector<std::string>& v,
     if (flag && flag2)
     {
         action = 5;
-        answer += "It is not allowed to use" +
-            " trigonometric functions with mod ";
+        answer += "You cannot use trigonometric functions with mod ";
         Destruct(list);
     }
     Destruct(station);
@@ -193,7 +192,7 @@ ForwardList polsk(const std::vector<std::string>& v,
 }
 
 double trigon(size_t& i, const std::vector<std::string>& v,
-              Alice::Response& response, std::string& answer)
+              std::string& answer)
 {
     int count = 1;
     i = i + 2;
@@ -216,15 +215,14 @@ double trigon(size_t& i, const std::vector<std::string>& v,
     v1.push_back("|");
     ForwardList subg;
     Construct(subg);
-    subg = polsk(v1, response, answer);
+    subg = polsk(v1, answer);
     PopFront(subg);
     Reverse(subg);
-    double value = calc(subg, response, answer);
+    double value = calc(subg, answer);
     return value;
 }
 
-double calc(ForwardList& list, Alice::Response& response,
-            std::string& answer)
+double calc(ForwardList& list, std::string& answer)
 {
     ForwardList2 station;
     Construct(station);
@@ -470,12 +468,12 @@ void MyCallback(const Alice::Request& request, Alice::Response& response)
         ForwardList list;
         Construct(list);
         std::string answer = "Oh! ";
-        list = polsk(v, response, answer);
+        list = polsk(v, answer);
         if (answer == "Oh! ") {
             PopFront(list);
             Reverse(list);
             std::string answer1 = " = " +
-                std::to_string(calc(list, response, answer)) + "\n";
+                std::to_string(calc(list, answer)) + "\n";
             if (answer == "Oh! ") {
                 answer = answer1;
             }
