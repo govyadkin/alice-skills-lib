@@ -21,9 +21,9 @@ struct ForwardList2 {
     Node* Head;
 };
 
-ForwardList polsk(const std::vector<std::string>& v, Alice::Response& response);
-double trigon(size_t& i, const std::vector<std::string>& v, Alice::Response& response);
-double calc(ForwardList& list, Alice::Response& response);
+ForwardList polsk(const std::vector<std::string>& v, Alice::Response& response, std::string& answerv);
+double trigon(size_t& i, const std::vector<std::string>& v, Alice::Response& response, std::string& answer);
+double calc(ForwardList& list, Alice::Response& response, std::string& answer);
 std::vector<std::string> split(const std::string& str);
 
 double Strtodouble(const std::string str);
