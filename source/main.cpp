@@ -166,7 +166,7 @@ ForwardList polsk(const std::vector<std::string>& v,
                 {
                     PushFront(list, PopFront(station));
                 }
-                double value = trigon(i, v, response);
+                double value = trigon(i, v, response, answer);
                 PushFront(list, "mod");
                 PushFront(list, std::to_string(value));
                 action = 7;
